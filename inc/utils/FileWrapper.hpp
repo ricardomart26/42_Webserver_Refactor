@@ -28,6 +28,7 @@ class FileWrapper {
 		void	closeFile();
 		void	open(const std::string &path);
 		static std::vector<std::string> getDir (std::string dir);
+		static std::string getDirPage(std::string dir);
 		bool	empty() const;
 
 		const std::string	&getContent() const;

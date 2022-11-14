@@ -1,4 +1,4 @@
-#include <Config.hpp>
+#include "Config.hpp"
 
 // PARSING DONT WORK IF THERE IS NOT A NEW LINE IN THE END OF THE FILE....
 

@@ -62,6 +62,16 @@ std::vector<std::string> FileWrapper::getDir (std::string dir)
     return files;
 }
 
+std::string FileWrapper::getDirPage(std::string dir){
+	std::vector<std::string> files = FileWrapper::getDir(dir);
+	std::string page = "<!DOCTYPE html>\n<html>\n   <body>\n    <div>\n    <ul>\n";
+
+	for (size_t i = 0; i < files.size(); i++)
+		page += "   	<li><a href=" + files[i] +">" + files[i] +"</a></li>\n";	
+	page += "    </ul>\n    </div>\n   </body>\n</html>\n";
+	return (page); 
+}
+
 void				FileWrapper::closeFile() { close(_fd); _fd = -1; }
 bool				FileWrapper::empty() const { return (_content.size() <= 1); }
 const std::string	&FileWrapper::getContent() const { return (_content); }
