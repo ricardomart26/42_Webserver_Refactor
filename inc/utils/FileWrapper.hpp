@@ -8,6 +8,11 @@
 #include <iostream>
 #include <cstring>
 #include <exception>
+#include <dirent.h>
+#include <errno.h>
+#include <vector>
+#include <string>
+
 
 class FileWrapper {
 
@@ -22,7 +27,7 @@ class FileWrapper {
 		void	readWithQueue();
 		void	closeFile();
 		void	open(const std::string &path);
-
+		static std::vector<std::string> getDir (std::string dir);
 		bool	empty() const;
 
 		const std::string	&getContent() const;

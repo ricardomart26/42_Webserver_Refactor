@@ -46,6 +46,22 @@ void	FileWrapper::read()
 		return ;
 }
 
+std::vector<std::string> FileWrapper::getDir (std::string dir)
+{
+    DIR                      *dp;
+    std::vector<std::string> files;
+
+    struct dirent *dirp;
+    if((dp  = opendir(dir.c_str())) == NULL) {
+        std::cout << "Error(" << errno << ") opening " << dir <<  std::endl;
+        return files;
+    }
+    while ((dirp = readdir(dp)) != NULL)
+        files.push_back(std::string(dirp->d_name));
+    closedir(dp);
+    return files;
+}
+
 void				FileWrapper::closeFile() { close(_fd); _fd = -1; }
 bool				FileWrapper::empty() const { return (_content.size() <= 1); }
 const std::string	&FileWrapper::getContent() const { return (_content); }
