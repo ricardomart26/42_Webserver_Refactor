@@ -2,17 +2,17 @@
 #include <sys/stat.h>
 
 
-bool	fileExists(const std::string &path)
+bool	fileExists2(const std::string &path)
 {
 	struct stat	buffer;
 	return (stat(path.c_str(), &buffer) == 0);
 }
 
 
-int main(void)
+int main2(void)
 {
 	std::string filename = "maino.cpp";
-	if (fileExists(filename))
+	if (fileExists2(filename))
 		std::cout << "Existe\n";
 	else
 		std::cout << "Não existe\n";

@@ -1,6 +1,6 @@
 #include <iostream>
-#include "Config.hpp"
-#include "Server.hpp"
+#include <Config.hpp>
+#include <Server.hpp>
 
 int main(int ac, char **av)
 {

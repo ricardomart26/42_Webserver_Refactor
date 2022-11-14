@@ -1,27 +1,28 @@
 NAME = server
 
-CC = c++ -Wall -Wextra -Werror -std=c++98 -pedantic -fsanitize=address -g
+CC = c++ -std=c++98 -pedantic -fsanitize=address -g
 
-SRCDIR = src/
-INCDIR = inc
-
-SRCS =	main.cpp $(shell find $(SRCDIR) -name '*.cpp')
-INC =	$(shell find $(INCDIR) -name '*.hpp')
+SRCS =	$(shell find ./src -name '*.cpp')
+OBJS = $(addsuffix .o, $(basename $(SRCS)))
+INCLUDES = $(addprefix -I, $(shell find inc -type d))
 
 all: $(NAME)
 
-$(NAME): $(SRCS) $(INC)
-	$(CC) $(SRCS) -I$(INCDIR)/configuration -I$(INCDIR)/server -I$(INCDIR)/utils -o $(NAME)
+%.o:%.cpp
+	$(CC) $(INCLUDES) -c -o $@ $<
 
-exec:
-	$(NAME)
-
-debug: $(SRCS) $(INC)
-	$(CC) -I$(INCDIR) -DDEBUG=1 $(SRCS) -o log_$(NAME)
+$(NAME): $(OBJS)
+	$(CC) -o $@  $^
 
 clean:
-	rm -rf $(NAME)
+	rm -rf $(OBJS)
+
+fclean:
+	rm -rf $(NAME) clean
 
 re: clean all
+
+r:
+	make && make clean && clear && ./$(NAME)
 
 .PHONY: all clean re
