@@ -6,6 +6,7 @@
 Response::Response(Request *request, int client_socket, size_t status_code, ServerBlock *sb) 
 	: _clientSocket(client_socket), _queue(_WRITE_SIZE), _file(_WRITE_SIZE), _status_code(status_code), _sb(sb), _path(request->getPath())
 {
+	
 	try {
 		_locationHandler = new LocationHandler(_sb, _path);
 		_locationHandler->findLocationBlock();
@@ -71,7 +72,6 @@ Response::Response(Request *request, int client_socket, size_t status_code, Serv
 	_rh.set_response_header();
 }
 
-Response::~Response() {}
 
 void	Response::ConvertHttpRequestToMap(const std::string &msg)
 {
@@ -155,7 +155,12 @@ int	Response::handlePhp(Request *request)
 	else
 	{
 		close(pfd2[1]);
-		write(pfd1[1], request->getBody().c_str(), request->getBody().size());
+		int write_ret = write(pfd1[1], request->getBody().c_str(), request->getBody().size());
+		if (write_ret == -1)
+		{
+			kill(pid, SIGTERM);
+			return (-1);
+		}
 		close(pfd1[1]);
 		close(pfd1[0]);
 		waitpid(pid, NULL, 0);

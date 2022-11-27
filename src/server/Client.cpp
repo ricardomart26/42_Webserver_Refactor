@@ -57,13 +57,20 @@ bool	Client::createResponse()
 	try 
 	{
 		_response = initResponse(_clientSocket);
-		_response->sendToClient(*_request);
+		if (_response->responseIsEmpty())
+			_response->contructResponse(*_request);
+		_response->answer();
 	}
 	catch (size_t err) 
 	{
 		_response = new Get(_request, _clientSocket, _sb, err);
 	}
-	return (isFinished());
+	catch (const std::exception &e)
+	{
+		return (false);
+	}
+	isFinished();
+	return (true);
 }
 
 int	Client::getClientSocket() const
@@ -75,31 +82,3 @@ Request	*Client::getRequest() const
 {
 	return (_request);
 }
-
-
-// bool	Client::sendHttpError(unsigned short code)
-// {
-// 	std::string reason_phrase = "KO";
-
-// 	if (code == 404)
-// 		reason_phrase = "Not Found";
-
-// 	FileWrapper file(Response::_WRITE_SIZE);
-// 	file.open("error.html");
-// 	file.read();
-// 	file.closeFile();
-
-// 	std::string body = file.getContent() + "\r\n";
-
-// 	std::string	status_line = _request->getHttpVersion() + " " + std::string(ft_itoa(code)) + " KO\r\n";
-// 	std::string	header = "Content-Type: text/html\r\nContent-Length: " + std::string(ft_itoa(body.size())) + "\r\n";
-// 	header += getTime() + "\r\n\r\n";
-
-// 	std::string	response = status_line + header + body;
-// 	send(_clientSocket, response.c_str(), response.size(), 0);
-
-// 	return (true);
-// }
-
-// 295 ou 261
-

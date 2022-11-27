@@ -5,7 +5,12 @@ Post::Post(Request *request, int clientFd,  ServerBlock *_sb, size_t err)
 
 Post::~Post() {}
 
-void	Post::sendToClient(const Request &request)
+bool	Post::responseIsEmpty()
+{
+	return (_queue.is_empty());
+}
+
+void	Post::contructResponse(const Request &request)
 {
 	if (_queue.is_empty())
 	{
@@ -23,11 +28,11 @@ void	Post::sendToClient(const Request &request)
 			_queue.add_data(_rh.get_header() + "\r\n");
 		_queue.add_data(_file.getContent() + "\r\n");
 	}
+}
 
+void	Post::answer()
+{
 	string response = _queue.get_data();
 	send(_clientSocket, response.c_str(), response.size(), 0);
-	#if DEBUG == 1
-		std::ofstream file("logs/Response/post.txt", std::ios::app);
-		file << response << std::endl;
-	#endif
 }
+

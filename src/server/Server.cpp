@@ -50,7 +50,7 @@ std::vector<Client *>::iterator	Server::getClient(int event_fd)
 	return (it);
 }
 
-void	Server::remove_client(std::vector<Client *>::iterator client, Socket *socket)
+void	Server::remove_client(std::vector<Client *>::iterator client, Poll *poll)
 {
 	/**
 	 * Entra nesta condição quando o request é vazio (acho que é para "fechar" o cliente).
@@ -58,7 +58,7 @@ void	Server::remove_client(std::vector<Client *>::iterator client, Socket *socke
 	 * para ler (_READ_SIZE), assim vai eliminar o cliente, em vez de ler o resto do pedido!
 	 */
 	std::cout << "Client Removed\n";
-	socket->getPoll()->removeEvent((*client)->getClientSocket());
+	poll->removeEvent((*client)->getClientSocket());
 	close((*client)->getClientSocket());
 	_clients.erase(client);
 }
@@ -81,10 +81,14 @@ void	Server::run()
 					if (isReadyToRead(event->revents))
 					{
 						if (!(*client)->createRequest())
-							remove_client(client, *socket);
+							remove_client(client, poll);
 					}
 					else if (isReadyToWrite(event->revents) && (*client)->getRequest() != NULL)
-						(*client)->createResponse();
+					{
+
+						if (!(*client)->createResponse())
+							remove_client(client, poll);
+					}
 				} catch (const std::exception &e) {
 					std::cout << e.what() << std::endl;
 				}

@@ -8,11 +8,11 @@ class Get : public Response
 	public:
 
 		Get(Request *_request, int fd, ServerBlock *sb, size_t err = 200);
-		Get(const Get &cpy);
-		Get	&operator=(const Get &rhs);
 		~Get();
 
-		void	sendToClient(const Request &request);
+		bool	responseIsEmpty();
+		void	contructResponse(const Request &request);
+		void	answer();
 	
 };
 

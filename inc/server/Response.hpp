@@ -28,7 +28,10 @@ class Response {
 		void	ConvertHttpRequestToMap(const std::string &msg);
 		std::pair<std::string, std::string>	splitHeaderAttribute(const std::string &s, char sep);
 
-		virtual void	sendToClient(const Request &request) = 0;
+		virtual void	contructResponse(const Request &request) = 0;
+		virtual bool	responseIsEmpty() = 0;
+		virtual void	answer() = 0;
+		
 		bool			finished();
 
 		static unsigned int _WRITE_SIZE;

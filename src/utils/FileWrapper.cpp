@@ -54,6 +54,11 @@ std::string			&FileWrapper::get_file_ext() { return (_file_ext); }
 int					FileWrapper::get_fd() const { return (_fd); }
 size_t				FileWrapper::size() const { return (_content.size()); }
 size_t				FileWrapper::get_max_size() const { return (_size); }
-void				FileWrapper::set_fd(int fd) { _fd = fd; }
+void				FileWrapper::set_fd(int fd)
+{ 
+	if (fd < 0) 
+		throw FileNotFound();
+	_fd = fd;
+}
 void				FileWrapper::set_content(const std::string &content) { _content = content; }
 void				FileWrapper::set_file_ext(const std::string ext) { _file_ext = ext; }

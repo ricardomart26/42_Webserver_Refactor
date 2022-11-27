@@ -5,7 +5,13 @@ Delete::Delete(Request *request, int clientFd,  ServerBlock *_sb, size_t err)
 
 Delete::~Delete() {}
 
-void	Delete::sendToClient(const Request &request)
+bool	Delete::responseIsEmpty() 
+{
+	return (_queue.is_empty());
+}
+
+
+void	Delete::contructResponse(const Request &request)
 {
 	std::string body = "{\"success\":\"true\"";
 	if (_queue.is_empty())
@@ -28,9 +34,8 @@ void	Delete::sendToClient(const Request &request)
 	}
 
 	string response = _queue.get_data();
-	send(_clientSocket, response.c_str(), response.size(), 0);
-	#if DEBUG == 1
-		std::ofstream file("logs/Response/post.txt", std::ios::app);
-		file << response << std::endl;
-	#endif
+	int send_ret = send(_clientSocket, response.c_str(), response.size(), 0);
+	(void)send_ret;
+	// if (send_ret == -1)
+	// 	throw 
 }

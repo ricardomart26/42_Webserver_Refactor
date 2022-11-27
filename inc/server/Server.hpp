@@ -24,7 +24,7 @@ class Server
 
 	private:
 		
-		void							remove_client(std::vector<Client *>::iterator client, Socket *socket);
+		void							remove_client(std::vector<Client *>::iterator client, Poll *socket);
 		std::vector<Client *>::iterator	getClient(int event_fd);
 
 		std::vector<Client *>	_clients;

@@ -5,7 +5,13 @@ Get::Get(Request *request, int clientFd, ServerBlock *_sb, size_t err)
 
 Get::~Get() {}
 
-void	Get::sendToClient(const Request &request)
+bool	Get::responseIsEmpty()
+{
+	return (_queue.is_empty());
+}
+
+
+void	Get::contructResponse(const Request &request)
 {
 	if (_queue.is_empty())
 	{
