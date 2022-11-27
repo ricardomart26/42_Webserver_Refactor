@@ -30,3 +30,10 @@ void	Get::contructResponse(const Request &request)
 	// std::cout << "\n\n\nRESPONSE IS:\n\n" << response << "\n";
 	send(_clientSocket, response.c_str(), response.size() - 1, 0);
 }
+
+void	Get::answer()
+{
+	string response = _queue.get_data();
+	send(_clientSocket, response.c_str(), response.size(), 0);
+}
+

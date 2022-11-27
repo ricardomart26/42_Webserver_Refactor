@@ -1,5 +1,5 @@
 #include "FileWrapper.hpp"
-#include "utils.hpp"
+#include <utils.hpp>
 
 FileWrapper::FileWrapper(size_t size)
 	: _fd(-1), _filename(), _size(size), _file_ext() {}
@@ -44,6 +44,32 @@ void	FileWrapper::read()
 	_content += '\0';
 	if (_content.size() == 0)
 		return ;
+}
+
+std::vector<std::string> FileWrapper::getDir (std::string dir)
+{
+    DIR                      *dp;
+    std::vector<std::string> files;
+
+    struct dirent *dirp;
+    if((dp  = opendir(dir.c_str())) == NULL) {
+        std::cout << "Error(" << errno << ") opening " << dir <<  std::endl;
+        return files;
+    }
+    while ((dirp = readdir(dp)) != NULL)
+        files.push_back(std::string(dirp->d_name));
+    closedir(dp);
+    return files;
+}
+
+std::string FileWrapper::getDirPage(std::string dir){
+	std::vector<std::string> files = FileWrapper::getDir(dir);
+	std::string page = "<!DOCTYPE html>\n<html>\n   <body>\n    <div>\n    <ul>\n";
+
+	for (size_t i = 0; i < files.size(); i++)
+		page += "   	<li><a href=" + files[i] +">" + files[i] +"</a></li>\n";	
+	page += "    </ul>\n    </div>\n   </body>\n</html>\n";
+	return (page); 
 }
 
 void				FileWrapper::closeFile() { close(_fd); _fd = -1; }

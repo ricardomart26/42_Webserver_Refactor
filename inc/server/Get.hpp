@@ -8,7 +8,7 @@ class Get : public Response
 	public:
 
 		Get(Request *_request, int fd, ServerBlock *sb, size_t err = 200);
-		~Get();
+		virtual ~Get();
 
 		bool	responseIsEmpty();
 		void	contructResponse(const Request &request);

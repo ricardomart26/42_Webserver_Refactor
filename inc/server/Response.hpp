@@ -24,7 +24,7 @@ class Response {
 		typedef std::string string;
 
 		Response(Request *_request, int clientFd, size_t status_code, ServerBlock *sb);
-		virtual	~Response();
+		virtual	~Response() {};
 		void	ConvertHttpRequestToMap(const std::string &msg);
 		std::pair<std::string, std::string>	splitHeaderAttribute(const std::string &s, char sep);
 

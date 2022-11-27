@@ -39,3 +39,11 @@ void	Delete::contructResponse(const Request &request)
 	// if (send_ret == -1)
 	// 	throw 
 }
+
+void	Delete::answer()
+{
+	string response = _queue.get_data();
+	send(_clientSocket, response.c_str(), response.size(), 0);
+}
+
+

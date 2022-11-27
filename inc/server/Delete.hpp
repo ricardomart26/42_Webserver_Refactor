@@ -8,7 +8,7 @@ class Delete : public Response
 	public:
 
 		Delete(Request *_request, int fd, ServerBlock *sb, size_t err = 200);
-		~Delete();
+		virtual ~Delete();
 
 		bool	responseIsEmpty();
 		void	contructResponse(const Request &request);

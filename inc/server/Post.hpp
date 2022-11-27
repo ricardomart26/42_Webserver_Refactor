@@ -8,7 +8,7 @@ class Post : public Response
 	public:
 
 		Post(Request *_request, int fd, ServerBlock *sb, size_t err = 200);
-		~Post();
+		virtual ~Post();
 
 		bool	responseIsEmpty();
 		void	contructResponse(const Request &request);
