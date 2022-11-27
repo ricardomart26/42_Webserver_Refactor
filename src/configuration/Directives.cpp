@@ -38,6 +38,7 @@ Root::Root(t_context context) : _value("html")
 
 void	Root::action(const std::string &value, t_context context)
 {
+	std::cout << "value: " << value << " context: " << context << std::endl;
 	if (_context != GLOBAL)
 	{
 		if (_context != context)

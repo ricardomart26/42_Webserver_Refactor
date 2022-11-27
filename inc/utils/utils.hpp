@@ -16,7 +16,7 @@
 
 
 std::vector<std::string>	split(std::string str, std::string set);
-std::string					trim(const std::string &str, const char *set);
+std::string					trim(const std::string &str, const char *set = SPACES);
 std::string					get_context_block(const std::string cont, size_t &i);
 std::string					slice_str(const std::string &cont, const std::string &separator, size_t &i);
 size_t						count_char(const std::string &str, char c);

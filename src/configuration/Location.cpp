@@ -11,18 +11,19 @@ Location::Location(const std::string &block, std::map<std::string, Directives*> 
 {
 	std::string end_delimiter;
 	_prefix = trim(block.substr(0, block.find('{')), SPACES);
-	_content = block.substr(block.find('{') + 1);
+	_content = block.substr(block.find('{'));
 
-	std::cout << "\n\n\n@LOCATION BLOCK:\n\n";
 	std::cout << "Prefix is: " << _prefix << std::endl;
-	// std::cout << "content is: " << _content << std::endl;
+	std::cout << "content is: " << _content << std::endl;
 
 	for (size_t i = 0; _content[i]; i = until_alpha(_content, i))
 	{
-		while (_content[i] && !isalpha(_content[i]) && _content[i] != '}')
+		while (_content[i] && !isalpha(_content[i]))
 			i++;
+		_content = trim(_content);
+		if (_content.empty() || _content.size() == 0)
+			return;
 		std::string sliced = slice_str(_content, SPACES, i);
-	
 		if (sliced.empty())
 			break ;
 		end_delimiter = std::string(SPACES + std::string(";"));

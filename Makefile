@@ -23,7 +23,7 @@ fclean: clean
 re: clean all
 
 r:
-	make && make clean && clear && ./$(NAME)
+	make && clear && ./$(NAME) conf_example/web_files.conf
 
 m:
 	make fclean && clear
