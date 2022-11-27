@@ -23,6 +23,7 @@ void	Get::contructResponse(const Request &request)
 
 		_queue.add_data(_statusLine);
 		_queue.add_data(_rh.get_header() + "\r\n");
+		// std::cout << "\nheader " << _rh.get_header() << std::endl;
 		_queue.add_data(_file.getContent() + "\r\n");
 	}
 	string response = _queue.get_data();

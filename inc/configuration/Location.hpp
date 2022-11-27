@@ -12,7 +12,7 @@ class Location
 {
 	public:
 
-		Location(const std::string &block, std::map<std::string, Directives*> m);
+		Location(const std::string &block);
 		Location(const Location &cpy);
 		const Location &operator=(const Location &rhs);
 		~Location();
@@ -20,6 +20,8 @@ class Location
 		template <typename T>
 		T *dir(const std::string key)
 		{
+			if (_m[key] == NULL)
+				return (NULL);
 			return (dynamic_cast<T*>(_m[key]));
 		}
 

@@ -31,7 +31,7 @@ const std::string	&ServerName::getValue(size_t i) const
 }
 
 
-Root::Root(t_context context) : _value("html")
+Root::Root(t_context context) : _value()
 {
 	_context = context;
 }

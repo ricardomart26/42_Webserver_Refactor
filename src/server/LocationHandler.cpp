@@ -16,11 +16,12 @@ LocationHandler::~LocationHandler() {}
 */
 void	LocationHandler::findLocationBlock()
 {
-	size_t i = 0;
 	std::cout << "\n@FIND LOCATION BLOCK\n " << std::endl;
 
 	std::cout << "Path is: " << _path << std::endl;
 	// Search in location prefix for the best match for request path
+	std::cout << "locationVec size is: " << _locationVec.size() << std::endl;
+	size_t i = 0;
 	for (; i < _locationVec.size(); i++)
 	{
 		std::cout << "Searching in: " << _locationVec[i]->getPrefix() << std::endl;

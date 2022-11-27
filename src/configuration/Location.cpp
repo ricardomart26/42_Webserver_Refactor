@@ -7,30 +7,53 @@ size_t	until_alpha(const std::string &str, size_t i)
 	return (i);
 }
 
-Location::Location(const std::string &block, std::map<std::string, Directives*> m) : _m(m)
+Location::Location(const std::string &block)
 {
+	_m["server_name"] = new ServerName(SERVER);
+	_m["index"] = new Index(GLOBAL); // Ainda nao encontrei a doc do index
+	_m["error_page"] = new ErrorPage(GLOBAL);
+	_m["root"] = new Root(GLOBAL);
+	_m["listen"] = new Listen(SERVER); // Do listen function
+	_m["client_max_body_size"] = new ClientMaxBodySize(GLOBAL); //
+	_m["limit_except"] = new LimitExcept(LOCATION);
+
 	std::string end_delimiter;
 	_prefix = trim(block.substr(0, block.find('{')), SPACES);
 	_content = block.substr(block.find('{') + 1);
 
-	std::cout << "\n\n\n@LOCATION BLOCK:\n\n";
-	std::cout << "Prefix is: " << _prefix << std::endl;
-	// std::cout << "content is: " << _content << std::endl;
+	// std::cout << "\n\n\n@LOCATION BLOCK:\n\n";
+	// std::cout << "Prefix is: " << _prefix << std::endl;
+	// std::cout << "content is: \n" << _content << std::endl;
 
-	for (size_t i = 0; _content[i]; i = until_alpha(_content, i))
+
+
+	for (size_t i = 0; _content[i]; i++)
 	{
-		while (_content[i] && !isalpha(_content[i]) && _content[i] != '}')
+		while (_content[i] && (isEqual(_content[i], SPACES) || _content[i] == '}'))
 			i++;
-		std::string sliced = slice_str(_content, SPACES, i);
-	
-		if (sliced.empty())
+		_content = &_content[i];
+		i = 0;
+		while (_content[i] && !isalpha(_content[i]))
+			i++;
+		_content = trim(_content);
+		if (_content.empty())
 			break ;
-		end_delimiter = std::string(SPACES + std::string(";"));
-		if (sliced == "limit_except")
-			end_delimiter = "}";
-		std::cout << "SEE THIS SLICED: " << sliced << std::endl;
-		_m[sliced]->action(slice_str(_content, end_delimiter, ++i), LOCATION);
+
+		std::string directive;
+		std::string value;
+		char delimitador = ';';
+		while (_content[i] && !isEqual(_content[i], SPACES))
+			directive.push_back(_content[i++]);
+		if (directive == "limit_except")
+			delimitador = '}';
+		while (_content[i] && _content[i] != delimitador)
+			value.push_back(_content[i++]);
+		i += _content[i] == delimitador;
+		if (directive[0] == '}')
+			break;
+		_m[directive]->action(trim(value), LOCATION);
 	}
+
 }
 
 Location::~Location() {}

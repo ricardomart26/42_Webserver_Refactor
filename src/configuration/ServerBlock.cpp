@@ -34,7 +34,7 @@ void	ServerBlock::parseFile()
 
 		try {
 			if (value == "location")
-				_locations.push_back(new Location(get_context_block(_content, ++i), _m));
+				_locations.push_back(new Location(get_context_block(_content, ++i)));
 			else if (value == "limit_except")
 				_m[value]->action(slice_str(_content, "}", ++i), SERVER);
 			else

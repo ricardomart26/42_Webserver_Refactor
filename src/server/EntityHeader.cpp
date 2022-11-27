@@ -4,7 +4,7 @@ EntityHeader::EntityHeader(string  &file_ext, size_t len, c_string &type)
 {
 	// Content-Type: text/html
 	string ctype = "text";
-	// std::cout << "File extension: " << file_ext << std::endl;
+	std::cout << "File extension: " << file_ext << std::endl;
 
 	if (!type.compare("image") || !file_ext.compare("jpeg"))
 		ctype = "image";
@@ -16,7 +16,6 @@ EntityHeader::EntityHeader(string  &file_ext, size_t len, c_string &type)
 
 
 	_content_type = "Content-Type: " + ctype + "/" + file_ext + "\r\n";
-
 	_content_len = "Content-Length: " + string(ft_itoa(len)) + "\r\n";
 
 	// Content-Encoding: gzip

@@ -66,8 +66,8 @@ Response::Response(Request *request, int client_socket, size_t status_code, Serv
 			_rh.add_response_header("Location: " + redirection + "\r\n");
 		_file.set_content(remove_header(_file.getContent()));
 	}
-	std::string ext = "html";
-	_rh.set_entity_header(ext, _file.getContent().size(), request->getSecFetchDest());
+	// std::string ext = "html";
+	_rh.set_entity_header(_file.get_file_ext(), _file.getContent().size(), request->getSecFetchDest());
 	_rh.set_general_header();
 	_rh.set_response_header();
 }

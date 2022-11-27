@@ -36,6 +36,10 @@ Request::Request(int client_fd, ServerBlock * sb)
 	if (_file.size() <= 1)
 		throw EmptyRequest();
 
+	std::cout << "@REQUEST: \n\n";
+	std::cout << _file.getContent() << std::endl;
+	std::cout << "\n\nEND REQUEST@\n\n";
+
 	ConvertHttpRequestToMap(_file.getContent());
 	
 	_requestLine = split(getMapValue("METHOD"), " ");
