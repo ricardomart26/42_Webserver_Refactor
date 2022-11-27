@@ -19,7 +19,7 @@ Location::Location(const std::string &block)
 
 	std::string end_delimiter;
 	_prefix = trim(block.substr(0, block.find('{')), SPACES);
-	_content = block.substr(block.find('{') + 1);
+	_content = block.substr(block.find('{'));
 
 	// std::cout << "\n\n\n@LOCATION BLOCK:\n\n";
 	// std::cout << "Prefix is: " << _prefix << std::endl;
