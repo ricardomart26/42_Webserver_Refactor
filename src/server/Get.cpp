@@ -10,7 +10,6 @@ bool	Get::responseIsEmpty()
 	return (_queue.is_empty());
 }
 
-
 void	Get::contructResponse(const Request &request)
 {
 	if (_queue.is_empty())

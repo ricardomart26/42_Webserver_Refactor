@@ -22,8 +22,12 @@ void	Poll::waitForConnection()
 
 	if (_nbrOfEvents != 0)
 		delete[] _events_returned;
-
-	_nbrOfEvents = poll(_events_poll, _size, 2);
+	
+	
+	// int timeout = -1;
+	// int timeout = 100000;
+	
+	_nbrOfEvents = poll(_events_poll, _size, 100000);
 
 	if (_nbrOfEvents == 0)
 		return ;
@@ -68,7 +72,6 @@ void	Poll::set_event(size_t pos, int fd, short event)
 	_events_poll[pos].fd = fd;
 	_events_poll[pos].events = event;
 	_events_poll[pos].revents = 0;
-
 }
 
 void	Poll::reset_connection(size_t pos)
@@ -77,9 +80,7 @@ void	Poll::reset_connection(size_t pos)
 	{
 		if (_events_returned[pos]->fd == _events_poll[x].fd)
 		{
-			_events_poll[x].fd = -1;
-			_events_poll[x].events = 0;
-			_events_poll[x].revents = 0;
+			set_event(x, -1, 0);
 			for ( ;x + 1 < _size; x++)
 				_events_poll[x] = _events_poll[x + 1];
 		}

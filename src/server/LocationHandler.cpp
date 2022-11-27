@@ -11,28 +11,29 @@ LocationHandler::LocationHandler(ServerBlock *sb, std::string &path)
 
 LocationHandler::~LocationHandler() {}
 
-
 /**
  * @brief Init will compare url endpoint (e.g. https://[domain name]:[port]/[url endpoint]), and compare with 
- * 
 */
 void	LocationHandler::findLocationBlock()
 {
 	size_t i = 0;
+	std::cout << "\n@FIND LOCATION BLOCK\n " << std::endl;
+
 	std::cout << "Path is: " << _path << std::endl;
 	// Search in location prefix for the best match for request path
 	for (; i < _locationVec.size(); i++)
 	{
-		std::cout << "Options are: " << _locationVec[i]->dir<Root>("root")->getValue() << std::endl;
-			
-		if (!_locationVec[i]->getPrefix().compare(_path) || !_locationVec[i]->getPrefix().compare("/"))
+		std::cout << "Searching in: " << _locationVec[i]->getPrefix() << std::endl;
+		std::cout << "Root Searching in: " << _locationVec[i]->getRoot() << std::endl;
+
+		// std::cout << "Options are: " << _locationVec[i]->dir<Root>("root")->getValue() << std::endl;
+		if (!_locationVec[i]->getPrefix().compare(_path))
 		{
 			_location = _locationVec[i];
-			std::cout << "\nLocation found: " <<  _location->getPrefix() << "\n\n";
+			// std::cout << "\nLocation found: " <<  _location->getPrefix() << "\n\n";
 			return ;
 		}
 	}
-
 	throw 404;
 	// What happens if nginx doest find the location
 	// sendHttpError(404);
@@ -56,8 +57,6 @@ std::string	LocationHandler::findRoot()
 		std::cout << "\n\t@FINAL PATH: " << _path << "\n\n";
 		return (_location->dir<Root>("root")->getValue() + _path);
 	}
-
-
 }
 
 void	LocationHandler::checkIfDir()
@@ -81,6 +80,7 @@ void	LocationHandler::checkIfDir()
 			}
 			else
 			{
+				// throw 404;
 				// Return 404 page not found
 				// EXIT HERE
 			}

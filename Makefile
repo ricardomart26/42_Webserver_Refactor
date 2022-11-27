@@ -1,6 +1,6 @@
 NAME = server
 
-CC = c++ -std=c++98 -pedantic -fsanitize=address -g
+CC = c++ -Wall -Wextra -Werror -std=c++98 -pedantic -fsanitize=address -g
 
 SRCS =	$(shell find ./src -name '*.cpp')
 OBJS = $(addsuffix .o, $(basename $(SRCS)))
@@ -9,20 +9,23 @@ INCLUDES = $(addprefix -I, $(shell find inc -type d))
 all: $(NAME)
 
 %.o:%.cpp
-	$(CC) $(INCLUDES) -c -o $@ $<
+	$(CC) -c $(INCLUDES) -o $@ $<
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) 
 	$(CC) -o $@  $^
 
 clean:
 	rm -rf $(OBJS)
 
-fclean:
-	rm -rf $(NAME) clean
+fclean: clean
+	rm -rf $(NAME)
 
 re: clean all
 
 r:
 	make && make clean && clear && ./$(NAME)
+
+m:
+	make fclean && clear
 
 .PHONY: all clean re

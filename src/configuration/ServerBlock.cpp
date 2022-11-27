@@ -12,11 +12,10 @@ ServerBlock::ServerBlock(const std::string &cont)
 	_m["listen"] = new Listen(SERVER); // Do listen function
 	_m["client_max_body_size"] = new ClientMaxBodySize(GLOBAL); //
 	_m["limit_except"] = new LimitExcept(LOCATION);
+	// _m["autoindex"] = new AutoIndex(LOCATION);
+
 }
 
-/**
- * @brief 
-*/
 void	ServerBlock::parseFile()
 {
 	InfoConfig confInfo;
