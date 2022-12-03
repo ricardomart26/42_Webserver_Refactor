@@ -27,7 +27,7 @@ void	Poll::waitForConnection()
 	// int timeout = -1;
 	// int timeout = 100000;
 	
-	_nbrOfEvents = poll(_events_poll, _size, 100000);
+	_nbrOfEvents = poll(_events_poll, _size, 10);
 
 	if (_nbrOfEvents == 0)
 		return ;

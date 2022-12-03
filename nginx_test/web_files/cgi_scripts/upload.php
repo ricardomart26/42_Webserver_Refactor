@@ -1,36 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<h1>Hello</h1>
+	<form action="inc_upload.php" method="POST" enctype="multipart/form-data">
+		<input type="file" name="filename">
+		<button type="submit" name="submit">UPLOAD FILE</button>
+	</form>
+	<?php
+		if (isset($_GET["uploadSuccess"]))
+			echo "\nUpload successfull";
+		if (isset($_GET["EmptyFile"]))
+			echo "\nFile not uploaded: File is empty";
+		if (isset($_GET["WrongExtension"]))
+			echo "\nFile not uploaded: Wrong extension";
+	?>
+</body>
+</html>
 
-<?php
-
-function my_error_handling($location, $errorMsg)
-{
-	header("Location: ".$location.'?'.$errorMsg);
-	exit();
-}
-
-$dir = "uploads/";
-
-if (!isset($_POST["submit"]))
-	my_error_handling("../upload.php", "SubmitNotClicked");
-
-if ($_FILES["filename"]["error"] !== 0)
-	my_error_handling("../upload.php", "ErrorUploadingFile");
-
-
-$fileArray = explode('.', $_FILES["filename"]["name"]);
-$fileExt = strtolower(end($fileArray));
-
-$allowedExt = array('jpg', 'jpeg', 'txt', 'png', 'pdf');
-
-if (!in_array($fileExt, $allowedExt))
-	my_error_handling("../upload.php", "WrongExtension");
-
-if ($_FILES["filename"]["size"] >= 50000)
-	my_error_handling("../upload.php", "FileToBig");
-
-if ($_FILES["filename"]["size"] === 0)
-	my_error_handling("../upload.php", "EmptyFile");
-
-move_uploaded_file($_FILES["filename"]["tmp_name"], $dir.uniqid('', true).".".$fileExt);
-header('Location: ../upload.php?uploadSuccess');
-
-?>

@@ -46,7 +46,15 @@ void	FileWrapper::read()
 		return ;
 }
 
-std::vector<std::string> FileWrapper::getDir (std::string dir)
+static int is_not_regular_file(const char *path)
+{
+    struct stat path_stat;
+    stat(path, &path_stat);
+   int ret = S_ISDIR(path_stat.st_mode);
+   return ret;
+}
+
+std::vector<std::string> FileWrapper::getDir(std::string dir)
 {
     DIR                      *dp;
     std::vector<std::string> files;
@@ -57,18 +65,25 @@ std::vector<std::string> FileWrapper::getDir (std::string dir)
         return files;
     }
     while ((dirp = readdir(dp)) != NULL)
-        files.push_back(std::string(dirp->d_name));
+	{
+		if (is_not_regular_file(std::string(dir + dirp->d_name).c_str()))
+	        files.push_back(std::string(dirp->d_name) + "/");
+		else
+	        files.push_back(std::string(dirp->d_name));
+
+	}
     closedir(dp);
     return files;
 }
 
-std::string FileWrapper::getDirPage(std::string dir){
+std::string FileWrapper::getDirPage(std::string dir)
+{
 	std::vector<std::string> files = FileWrapper::getDir(dir);
 	std::string page = "<!DOCTYPE html>\n<html>\n   <body>\n    <div>\n    <ul>\n";
 
 	for (size_t i = 0; i < files.size(); i++)
 		page += "   	<li><a href=" + files[i] +">" + files[i] +"</a></li>\n";	
-	page += "    </ul>\n    </div>\n   </body>\n</html>\n";
+	page += "    </ul>\n    </div>\n   </body>\n</html>\n\r\n";
 	return (page); 
 }
 
@@ -80,11 +95,13 @@ std::string			&FileWrapper::get_file_ext() { return (_file_ext); }
 int					FileWrapper::get_fd() const { return (_fd); }
 size_t				FileWrapper::size() const { return (_content.size()); }
 size_t				FileWrapper::get_max_size() const { return (_size); }
+
 void				FileWrapper::set_fd(int fd)
 { 
 	if (fd < 0) 
 		throw FileNotFound();
 	_fd = fd;
 }
+
 void				FileWrapper::set_content(const std::string &content) { _content = content; }
 void				FileWrapper::set_file_ext(const std::string ext) { _file_ext = ext; }

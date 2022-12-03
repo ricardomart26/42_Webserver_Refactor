@@ -6,18 +6,24 @@
 Response::Response(Request *request, int client_socket, size_t status_code, ServerBlock *sb) 
 	: _clientSocket(client_socket), _queue(_WRITE_SIZE), _file(_WRITE_SIZE), _status_code(status_code), _sb(sb), _path(request->getPath())
 {
-	
+	std::cout << "\n@RESPONSE:\n";
 	try {
 		_locationHandler = new LocationHandler(_sb, _path);
 		_locationHandler->findLocationBlock();
-		_path = _locationHandler->findRoot();
-		
-		// No caso do url acabar com um '/'
-		_locationHandler->checkIfDir();
-
-		// _path = _locationHandler->getPath();
-		std::cout << "Final path: " << _path << "\n";
-		_file.open(_path);
+		_locationHandler->findRoot();
+		std::cout << "\t\t@PATH IS: " << _path << "\n";
+		if (_locationHandler->checkIfDir())
+		{
+			FileWrapper f(200);
+			std::string path = _locationHandler->getPath();
+			if (!path.empty() && path[0] == '/')
+				path.erase(path.begin());
+			std::string dir = f.getDirPage(path);
+			_file.set_content(dir);
+			_file.set_file_ext("html");
+		}
+		else
+			_file.open(_locationHandler->getPath());
 	} catch (int err) {
 		std::cout << "error is: " << err << std::endl;
 		_status_code = (size_t)err;

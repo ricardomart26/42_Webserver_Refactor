@@ -1,7 +1,10 @@
 #include "Client.hpp"
 
-Client::Client(int fd, ServerBlock *sb)
-	: _clientSocket(fd), _keep_alive(false), _request(NULL), _response(NULL), _finished(false), _sb(sb) {}
+Client::Client(int fd, std::vector<ServerBlock *> sb)
+	: _clientSocket(fd), _keep_alive(false), _request(NULL), _response(NULL), _finished(false), _sbVector(sb), _sb(NULL) 
+{
+	std::cout << "@CLIENT: \n";
+}
 
 Client::~Client() {}
 
@@ -27,7 +30,8 @@ bool	Client::createRequest()
 		// Se for um novo pedido
 		if (_request != NULL)
 			delete	_request;
-		_request = new Request(_clientSocket, _sb); 
+		_request = new Request(_clientSocket, _sbVector);
+		_sb = _request->findServerBlock(); 
 	}
 	catch (const std::exception &e) 
 	{

@@ -70,9 +70,14 @@ void	Socket::getReadAndWriteSize()
 void	Socket::socket_bind(size_t port)
 {
 	// std::cout << "port: " << port << std::endl;
+	// host = gethostbyname(serverName.c_str());
+	// if (!host)
+	// 	error_and_exit("GetHostByName error");
+	// bcopy((char *)host->h_addr_list[0], (char *)&_sock_addr.sin_addr.s_addr, host->h_length);
+
 	_port = port;
 	_sock_addr.sin_family = _address_family; // ipv4 address
-	_sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	_sock_addr.sin_addr.s_addr = INADDR_ANY;
 	_sock_addr.sin_port = htons(_port); // port
 
 	// https://man7.org/linux/man-pages/man2/bind.2.html

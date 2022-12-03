@@ -28,17 +28,15 @@
  * 
  */
 
-Request::Request(int client_fd, ServerBlock * sb)
+Request::Request(int client_fd, std::vector<ServerBlock *> sb)
 	: _file(client_fd, _READ_SIZE), _sb(sb)
 {
 	_file.read();
-
 	if (_file.size() <= 1)
 		throw EmptyRequest();
 
 	std::cout << "@REQUEST: \n\n";
 	std::cout << _file.getContent() << std::endl;
-	std::cout << "\n\nEND REQUEST@\n\n";
 
 	ConvertHttpRequestToMap(_file.getContent());
 	
@@ -47,9 +45,31 @@ Request::Request(int client_fd, ServerBlock * sb)
 
 	if (!getMethod().compare("GET"))
 		_path = removeQuery();
+
 }
 
 Request::~Request() {}
+
+ServerBlock	*Request::findServerBlock()
+{
+	std::string host = _map["Host"];
+		std::cout << "@DEBUG: " << host << std::endl;
+
+	if (!host.empty())
+	{
+		std::cout << "@DEBUG: " << host << std::endl;
+		for (size_t i = 0; i < _sb.size(); i++)
+		{
+			std::vector<std::string> snVector = dynamic_cast<ServerName *>(_sb[i]->dir<ServerName>("server_name"))->getValue();
+			for (size_t j = 0; j < snVector.size(); j++)
+			{
+				if (host == snVector[j])
+					return (_sb[i]);
+			}
+		}
+	}
+	return (_sb[0]);
+}
 
 void	Request::ConvertHttpRequestToMap(const std::string &msg)
 {

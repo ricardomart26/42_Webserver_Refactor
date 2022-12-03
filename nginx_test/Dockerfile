@@ -11,10 +11,11 @@ COPY ./default.conf /etc/nginx/conf.d/
 RUN mkdir -p /etc/nginx/logs
 RUN touch /etc/nginx/logs/{error,access}.log
 # RUN chown -R www-data:www-data /var/Www/html/
-COPY ./web_files/ /var/www/html/
+COPY ./web_files /var/www/html/web_files
 RUN chmod 777 /var/www/html/
-RUN nginx -t
+RUN chown -R www-data:www-data /var/www/html/web_files
 
+RUN nginx -t
 RUN sed -i "s/run\/php\/php7.4-fpm.sock\//127.0.0.1:9000/g" /etc/php/7.4/fpm/pool.d/www.conf
 RUN service php7.4-fpm start
 

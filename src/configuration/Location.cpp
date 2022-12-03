@@ -16,17 +16,15 @@ Location::Location(const std::string &block)
 	_m["listen"] = new Listen(SERVER); // Do listen function
 	_m["client_max_body_size"] = new ClientMaxBodySize(GLOBAL); //
 	_m["limit_except"] = new LimitExcept(LOCATION);
+	_m["autoindex"] = new AutoIndex(GLOBAL);
 
-	std::string end_delimiter;
 	_prefix = trim(block.substr(0, block.find('{')), SPACES);
 	_content = block.substr(block.find('{'));
 
-	// std::cout << "\n\n\n@LOCATION BLOCK:\n\n";
-	// std::cout << "Prefix is: " << _prefix << std::endl;
-	// std::cout << "content is: \n" << _content << std::endl;
+}
 
-
-
+void	Location::parseLocation()
+{
 	for (size_t i = 0; _content[i]; i++)
 	{
 		while (_content[i] && (isEqual(_content[i], SPACES) || _content[i] == '}'))
@@ -44,19 +42,20 @@ Location::Location(const std::string &block)
 		char delimitador = ';';
 		while (_content[i] && !isEqual(_content[i], SPACES))
 			directive.push_back(_content[i++]);
-		if (directive == "limit_except")
-			delimitador = '}';
 		while (_content[i] && _content[i] != delimitador)
 			value.push_back(_content[i++]);
 		i += _content[i] == delimitador;
-		if (directive[0] == '}')
+		if (directive[0] == '}' || value.empty())
 			break;
 		_m[directive]->action(trim(value), LOCATION);
 	}
-
 }
 
-Location::~Location() {}
+Location::~Location() 
+{
+	for (std::map<std::string, Directives *>::iterator it = _m.begin(); it != _m.end(); it++)
+		delete (it->second);
+}
 
 Location::Location(const Location &cpy)
 {
@@ -88,9 +87,14 @@ const std::string &Location::getPrefix() const
 	return (_prefix);
 }
 
-const std::vector<std::string>	&Location::getIndex() const
+const std::vector<std::string>	&Location::getIndex()
 {
-	return (_index);
+	return (dynamic_cast<Index *>(_m["index"])->getValue());
+}
+
+t_autoindex	Location::getAutoIndex()
+{
+	return (dynamic_cast<AutoIndex *>(_m["autoindex"])->getValue());
 }
 
 std::string Location::getRoot()

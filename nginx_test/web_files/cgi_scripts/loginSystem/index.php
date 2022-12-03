@@ -1,4 +1,4 @@
-<!-- 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +19,6 @@
 		<input type="password" id="password" name="pass">
 		<input type="submit" value="submit">
 	</form>
-	<!-- <input type="submit" value="SHOW DB"> -->
+	<input type="submit" value="SHOW DB">
 </body>
-</html> -->
+</html>

@@ -27,9 +27,10 @@ class Location
 
 		const std::string				&getPrefix() const;
 		std::string						getRoot();
-		const std::vector<std::string>	&getIndex() const;
-
+		const std::vector<std::string>	&getIndex();
+		t_autoindex						getAutoIndex();
 		void							orderLocations();
+		void							parseLocation();
 
 	private:
 

@@ -16,8 +16,9 @@ class Config
 		~Config();
 
 
-		ServerBlock	*getServerBlock(size_t i);
+		ServerBlock					*getServerBlock(size_t i);
 		std::vector<ServerBlock*>	&getServerBlockVec();
+		std::vector<size_t>			getServerPorts();
 
 		class ConfigCheckEndLine : public std::exception
 		{

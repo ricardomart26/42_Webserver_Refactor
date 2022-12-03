@@ -1,11 +1,14 @@
 #include "Server.hpp"
 
-Server::Server(ServerBlock *sb) : _sb(sb)
+Server::Server(size_t port, std::vector<ServerBlock *> sbVector) : _socket(AF_INET, SOCK_STREAM, 0, port)
 {
-	ListenIndv *listenIndv = NULL;
-	for (size_t j = 0; (listenIndv = _sb->dir<Listen>("listen")->getListenIndv(j)) != NULL ; j++)
-		_socket_set.push_back(new Socket(AF_INET, SOCK_STREAM, 0, listenIndv->getValue().second));
-	_socket_set[0]->getReadAndWriteSize();
+	_socket.getReadAndWriteSize();
+
+	for (size_t i = 0; i < sbVector.size(); i++)
+	{
+		if (sbVector[i]->hasPort(port))
+			_sb.push_back(sbVector[i]);
+	}
 }
 
 Server::~Server() {}
@@ -65,33 +68,30 @@ void	Server::remove_client(std::vector<Client *>::iterator client, Poll *poll)
 
 void	Server::run()
 {
-	for (std::vector<Socket *>::iterator socket = _socket_set.begin(); socket != _socket_set.end(); socket++)
+	Poll *poll = _socket.getPoll();
+	poll->waitForConnection();
+	for (size_t i = 0; i < poll->nbrOfEvents(); i++)
 	{
-		Poll *poll = (*socket)->getPoll();
-		poll->waitForConnection();
-		for (size_t i = 0; i < poll->nbrOfEvents(); i++)
+		pollfd *event = poll->getReturnedEvents(i);
+		if (isNewConnection(event->fd, _socket.getSocket()))
+			_clients.push_back(new Client(_socket.socketAccept(), _sb));
+		else
 		{
-			pollfd *event = poll->getReturnedEvents(i);
-			if (isNewConnection(event->fd, (*socket)->getSocket()))
-				_clients.push_back(new Client((*socket)->socketAccept(), _sb));
-			else
-			{
-				try {
-					std::vector<Client *>::iterator	client = getClient(event->fd);
-					if (isReadyToRead(event->revents))
-					{
-						if (!(*client)->createRequest())
-							remove_client(client, poll);
-					}
-					else if (isReadyToWrite(event->revents) && (*client)->getRequest() != NULL)
-					{
-
-						if (!(*client)->createResponse())
-							remove_client(client, poll);
-					}
-				} catch (const std::exception &e) {
-					std::cout << e.what() << std::endl;
+			try {
+				std::vector<Client *>::iterator	client = getClient(event->fd);
+				if (isReadyToRead(event->revents))
+				{
+					if (!(*client)->createRequest())
+						remove_client(client, poll);
 				}
+				else if (isReadyToWrite(event->revents) && (*client)->getRequest() != NULL)
+				{
+
+					if (!(*client)->createResponse())
+						remove_client(client, poll);
+				}
+			} catch (const std::exception &e) {
+				std::cout << e.what() << std::endl;
 			}
 		}
 	}

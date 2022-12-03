@@ -28,13 +28,12 @@ class Socket
 		void		getReadAndWriteSize();
 		int			getSocket();
 		Poll		*getPoll();
-
 	
 	private:
 
 		void		socket_bind(size_t port);
 		void		socket_listen(int con);
-		
+
 		struct sockaddr_in	_sock_addr;
 		int					_server_socket;
 		int					_address_family;

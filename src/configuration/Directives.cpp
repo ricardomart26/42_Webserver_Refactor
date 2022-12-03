@@ -13,21 +13,65 @@ void	ServerName::action(const std::string &value, t_context context)
 			throw badContext();
 	}
 	std::vector<std::string> temp;
-	temp = split(value, SPACES);
+	temp = split(value);
 	_value.insert(_value.end(), temp.begin(), temp.end());
 }
 
 void	ServerName::printContent() const
 {
-	std::cout << "\nServer name: \n\n";
+	std::cout << "\t@SERVER NAME:";
 	for (size_t j = 0; j < _value.size(); j++)
-		std::cout << "\t" << _value[j] << std::endl;
+		std::cout << " " << _value[j];
 	std::cout << "\n";
 }
 
-const std::string	&ServerName::getValue(size_t i) const
+const std::vector<std::string>	&ServerName::getValue() const
 {
+	return (_value);
+}
+
+
+std::string	ServerName::getValue(size_t i) const
+{
+	if (i > _value.size())
+		return ("");
 	return (_value[i]);
+}
+
+AutoIndex::AutoIndex(t_context context) : _value()
+{
+	_context = context;
+	_value = NOT_DEFINED;
+}
+
+void	AutoIndex::action(const std::string &value, t_context context)
+{
+	if (_context != GLOBAL)
+	{
+		if (_context != context)
+			throw badContext();
+	}
+	if (value == "on")
+		_value = TRUE;
+	else if (value == "off")
+		_value = FALSE;
+	else
+		throw ValueNotAllowed();
+}
+
+void	AutoIndex::printContent() const
+{
+	std::string res = "NOT_DEFINED";
+	if (_value == FALSE)
+		res = "FALSE";
+	else if (_value == TRUE)
+		res = "TRUE";
+	std::cout << "\t@AUTOINDEX: " << res << std::endl;
+}
+
+t_autoindex	AutoIndex::getValue() const
+{
+	return (_value);
 }
 
 
@@ -38,14 +82,13 @@ Root::Root(t_context context) : _value()
 
 void	Root::action(const std::string &value, t_context context)
 {
-	std::cout << "value: " << value << " context: " << context << std::endl;
 	if (_context != GLOBAL)
 	{
 		if (_context != context)
 			throw badContext();
 	}
 	std::vector<std::string> temp;
-	temp = split(value, SPACES);
+	temp = split(value);
 	if (temp.size() > 1)
 		throw TooManyRoot();
 	_value = temp[0];
@@ -53,7 +96,7 @@ void	Root::action(const std::string &value, t_context context)
 
 void	Root::printContent() const
 {
-	std::cout << "\nroot: " << _value << std::endl;
+	std::cout << "\t@ROOT: " << _value << std::endl;
 }
 
 const std::string	&Root::getValue() const
@@ -92,9 +135,8 @@ void	ClientMaxBodySize::action(const std::string &value, t_context context)
 
 void	ClientMaxBodySize::printContent() const
 {
-	std::cout << "\b\nclient_max_body_size: " << _value << std::endl;
+	std::cout << "\t@MAX_BODY_SIZE: " << _value << std::endl;
 }
-
 
 ErrorPage::ErrorPage(t_context context) : _value()
 {
@@ -168,16 +210,15 @@ std::string ErrorPage::getErrorPath(int errorCode) const
 
 void	ErrorPage::printContent() const
 {
-	std::cout << "\nError page: \n\n";
+	std::cout << "\t@ERROR_PAGE: \n";
 	for (size_t j = 0; j < _value.size(); j++)
 	{
+		std::cout << "\t\t@error number: ";
 		for (size_t x = 0; x < _value[j].first.size(); x++)
-			std::cout << "\terror number - " << _value[j].first[x] << std::endl;
-		std::cout << "\terror url - " << _value[j].second << std::endl;
-		std::cout << "\t-----------------\n";
+			std::cout << _value[j].first[x] << " ";
+		std::cout << "\n\t\t@error url - " << _value[j].second << std::endl;
 	}
 }
-
 
 /**
  * 
@@ -213,7 +254,9 @@ void	Listen::action(const std::string &value, t_context context)
 		if (_context != context)
 			throw badContext();
 	}
-	_indvListen.push_back(new ListenIndv(split(value, SPACES)));
+	if (split(value).size() > 1)
+		throw std::exception();
+	_indvListen.push_back(new ListenIndv(value));
 }
 
 void	Listen::check_dup_listen_directives()
@@ -231,15 +274,25 @@ void	Listen::check_dup_listen_directives()
 	}
 }
 
-void	Listen::printContent() const {}
-
-
-ListenIndv::ListenIndv(const std::vector<std::string> &split)
+ListenIndv *Listen::getListenIndv(size_t i) const
 {
-	_spl_value = split;
-	std::string value = split[0]; 
-	std::vector<std::string>	_options;
-	
+	if (i >= _indvListen.size())
+		return (NULL);
+	return (_indvListen[i]);
+}
+
+void	Listen::printContent() const 
+{
+	for (size_t i = 0; i < _indvListen.size(); i++)
+	{
+		const std::pair<std::string, int> port_and_address = _indvListen[i]->getValue();
+		std::cout << "\t@ADDRESS: " << port_and_address.first << ":" << port_and_address.second << "\n";
+	}
+}
+
+ListenIndv::ListenIndv(const std::string &valueListen)
+{
+	std::string value = valueListen;
 	size_t f_ret = value.find(':');
 
 	_syntax = ADDRESS_PORT;
@@ -266,20 +319,13 @@ ListenIndv::ListenIndv(const std::vector<std::string> &split)
 	{
 		_address = "localhost";
 		if (value[0] == ':')
-			value.erase(0, 1);
+			value.erase(value.begin());
 		handlePort(value.c_str());
 	}
 	// std::cout << "Port is: " << _port << std::endl;
 	// std::cout << "Address is: " << _address << std::endl;
 	_value = std::make_pair(_address, _port);
 
-}
-
-ListenIndv *Listen::getListenIndv(size_t i) const
-{
-	if (i >= _indvListen.size())
-		return (NULL);
-	return (_indvListen[i]);
 }
 
 
@@ -319,7 +365,7 @@ void	ListenIndv::handleAddress(std::string addr)
 
 void	ListenIndv::handlePort(const std::string &port)
 {
-	std::cout << "port is: " << port << std::endl;
+	// std::cout << "port is: " << port << std::endl;
 	if (port.find_last_not_of("0123456789") != std::string::npos)
 		throw ListenPortNotValid();
 
@@ -332,7 +378,6 @@ const std::pair<std::string, int>	&ListenIndv::getValue() const
 {
 	return (_value);
 }
-
 
 LimitExcept::LimitExcept(t_context context)
 {
@@ -370,9 +415,9 @@ void	LimitExcept::action(const std::string &value, t_context context)
 
 void	LimitExcept::printContent() const
 {
-	std::cout << "limit except:  \n\n\tGET - " << _value[0] 
-	<< "\n\tPOST - " << _value[1]
-	<< "\n\tDELETE - " << _value[2] << std::endl;
+	std::cout << "\t@LIMIT EXCEPT:  \n\t\tGET - " << _value[0] 
+	<< "\n\t\tPOST - " << _value[1]
+	<< "\n\t\tDELETE - " << _value[2] << std::endl;
 }
 
 
@@ -390,15 +435,15 @@ void	Index::action(const std::string &value, t_context context)
 	}
 
 	std::vector<std::string> temp;
-	temp = split(value, SPACES);
+	temp = split(value);
 	_value.insert(_value.end(), temp.begin(), temp.end());
 }
 
 void	Index::printContent() const
 {
-	std::cout << "Index: \n\n";
+	std::cout << "\t@Index:";
 	for (size_t i = 0; i < _value.size(); i++)
-		std::cout << "\t" << _value[i] << std::endl;
+		std::cout << " " << _value[i];
 	std::cout << "\n";
 }
 

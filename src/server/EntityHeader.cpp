@@ -4,7 +4,7 @@ EntityHeader::EntityHeader(string  &file_ext, size_t len, c_string &type)
 {
 	// Content-Type: text/html
 	string ctype = "text";
-	std::cout << "File extension: " << file_ext << std::endl;
+	// std::cout << "File extension: " << file_ext << std::endl;
 
 	if (!type.compare("image") || !file_ext.compare("jpeg"))
 		ctype = "image";

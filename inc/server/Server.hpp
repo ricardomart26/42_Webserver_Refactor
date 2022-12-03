@@ -15,7 +15,7 @@ class Server
 	public:
 
 		Server();
-		Server(ServerBlock *sb);
+		Server(size_t ports, std::vector<ServerBlock *> sb);
 		~Server();
 
 		void	setupSockets();
@@ -27,10 +27,9 @@ class Server
 		void							remove_client(std::vector<Client *>::iterator client, Poll *socket);
 		std::vector<Client *>::iterator	getClient(int event_fd);
 
-		std::vector<Client *>	_clients;
-		// bool					_keep_alive;
-		std::vector<Socket *>	_socket_set;
-		ServerBlock				*_sb;
+		std::vector<Client *>		_clients;
+		std::vector<ServerBlock *>	_sb;
+		Socket						_socket;
 
 };
 

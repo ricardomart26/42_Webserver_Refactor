@@ -50,11 +50,43 @@ class ServerName : public Directives
 
 		void				action(const std::string &value, t_context context);
 		void				printContent() const;
-		const std::string	&getValue(size_t i) const;
+		std::string			getValue(size_t i) const;
+		const std::vector<std::string>	&getValue() const;
 
 	private:
 
 		std::vector<std::string>	_value;
+
+};
+
+typedef enum s_autoindex {
+	NOT_DEFINED,
+	FALSE,
+	TRUE
+} t_autoindex;
+
+class AutoIndex : public Directives
+{
+	public:
+
+		AutoIndex(t_context context);
+		~AutoIndex() {}
+
+		void		action(const std::string &value, t_context context);
+		void		printContent() const;
+		t_autoindex	getValue() const;
+
+		class ValueNotAllowed : public std::exception
+		{
+			const char *what() const throw()
+			{
+				return ("AutoIndex value not allowed (should be on/off)");
+			}
+		};
+
+	private:
+
+		t_autoindex	_value;
 
 };
 
@@ -149,12 +181,11 @@ typedef enum s_syntax {
 	PORT
 } e_syntax;
 
-
 class ListenIndv 
 {
 	public:
 
-		ListenIndv(const std::vector<std::string> &spl_value);
+		ListenIndv(const std::string &value);
 		~ListenIndv() {}
 
 		void	handleAddress(std::string addr);
@@ -185,7 +216,6 @@ class ListenIndv
 		std::string					_address;
 		int							_port;
 		e_syntax					_syntax;
-		std::vector<std::string>	_spl_value;
 		static const std::vector<std::string>	_options;
 };
 

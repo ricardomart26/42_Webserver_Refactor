@@ -24,6 +24,9 @@ class Request
 		typedef std::map<string, string> map_type;
 		typedef const map_type c_map_type;
 
+		Request(int client_fd, std::vector<ServerBlock *> sb);
+		~Request();
+
 		class EmptyRequest : public std::exception
 		{
 			const char *what() const throw() { return ("Request Empty"); }
@@ -33,17 +36,14 @@ class Request
 		{
 			const char *what() const throw() { return ("Server Block Not Found"); }
 		};
-
-		Request(int client_fd, ServerBlock * sb);
-		~Request();
-
 		
-		void		ConvertHttpRequestToMap(const std::string &msg);
+		void								ConvertHttpRequestToMap(const std::string &msg);
 		std::pair<std::string, std::string>	splitHeaderAttribute(c_string &s, char sep);
-		std::string	&getMapValue(c_string value);
+		std::string							&getMapValue(c_string value);
 		std::map<std::string, std::string>	&getMap();
 
 		void		setPath(const std::string &path);
+		ServerBlock	*findServerBlock();
 
 		string		&getPath();
 		map_type	&getInfo();
@@ -72,9 +72,7 @@ class Request
 		std::string					_queryString;
 		FileWrapper					_file;
 		std::vector<std::string>	_requestLine;
-		ServerBlock					*_sb;
-
-		
+		std::vector<ServerBlock *>	_sb;
 };
 
 #endif

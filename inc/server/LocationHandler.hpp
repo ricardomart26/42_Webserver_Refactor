@@ -4,7 +4,7 @@
 #include "Location.hpp"
 #include "ServerBlock.hpp"
 #include "utils.hpp"
-
+#include "FileWrapper.hpp"
 
 class LocationHandler {
 
@@ -14,14 +14,15 @@ class LocationHandler {
 		~LocationHandler();
 
 		void					findLocationBlock();
-		std::string				findRoot();
+		void					findRoot();
 		std::string				searchForPathWithIndex(const std::vector<std::string> &index_vec);
 		bool					emptyLocation() const;
-		void					checkIfDir();
+		bool					checkIfDir();
 
 		std::vector<Location*>	getLocationVec() const;
 		Location				*getLocation() const;
 		std::string				&getPath();
+		// bool					getAutoIndex() const;
 
 	private:
 
@@ -30,6 +31,8 @@ class LocationHandler {
 		std::string				_path;
 		std::string				_sbRoot;
 		std::vector<Location *>	_locationVec;
+		// bool					_autoIndex;
+
 };
 
 

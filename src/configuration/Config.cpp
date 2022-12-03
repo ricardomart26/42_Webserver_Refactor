@@ -4,8 +4,7 @@
 
 /** @brief Receives a configuration file, see if file exists, 
  * and parse the file to pass information to the server */
-Config::Config(const char *filename)
-: _file(200)
+Config::Config(const char *filename): _file(200)
 {
 	_file.open(filename);
 	_file.read();
@@ -54,8 +53,6 @@ void	Config::remove_empty_new_lines()
 	}
 }
 
-
-
 /**
  * @brief Finds every server block in the config file, and constructs every serverBlock class for each server context found
  * and addes them to a vector.
@@ -63,15 +60,15 @@ void	Config::remove_empty_new_lines()
 void	Config::parse_server_block()
 {
 	size_t i = 0;
-	int pos = 0;
-
-	while (i < _content.length() && (pos = _content.find("server", i)) != -1)
+	size_t pos = 0;
+	while (i < _content.length() && (pos = _content.find("server", i)) != std::string::npos)
 	{
 		// Find returns the position of the beginning of the word, so we need to advance the "server" word
 		pos += 6;
-		while (!isalpha(_content[pos]))
+		while (pos < _content.length() && !isalpha(_content[pos]))
 			pos++;
-
+		if (pos == _content.length())
+			return ;
 		i = pos;
 		for (size_t counter = 1; counter && _content[i]; i++) 
 		{
@@ -80,9 +77,36 @@ void	Config::parse_server_block()
 			else if (_content[i] == '}')
 				counter--;
 		}
-		_server_block.push_back(new ServerBlock(_content.substr(pos, i - pos - 1)));
-		_server_block[_server_block.size() - 1]->parseFile();
+		try {
+			_server_block.push_back(new ServerBlock(_content.substr(pos, i - pos - 1)));
+			_server_block[_server_block.size() - 1]->parseFile();
+		} catch (const std::exception &e) {
+			std::cout << e.what() << std::endl;
+			for (size_t i = 0; i < _server_block.size(); i++)
+				delete _server_block[i];
+			throw std::exception();
+		}
 	}
+}
+
+std::vector<size_t>	Config::getServerPorts()
+{
+	std::vector<size_t> ret;
+	for (size_t i = 0; i < this->_server_block.size(); i++)
+	{
+		std::vector<size_t> ports = _server_block[i]->getPorts();
+		ret.insert(ret.end(), ports.begin(), ports.end());
+	}
+	for (size_t i = 0; i < ret.size(); i++)
+	{
+		for (size_t j = i + 1; j < ret.size(); j++)
+		{
+			if (ret[i] == ret[j])
+				ret.erase(ret.begin() + j);
+		}
+	}
+
+	return (ret);
 }
 
 /**
@@ -98,7 +122,6 @@ bool	Config::invalid_end_of_line()
 		{
 			while (index > 0 && isspace(_content[index])) 
 				index--;
-
 			if (_content[index] == ';')
 			{
 				if (!is_directives(index - 1))

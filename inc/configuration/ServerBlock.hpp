@@ -9,7 +9,6 @@
 #include <map>
 #include <sstream>
 
-// #include "Config.hpp"
 #include "InfoConfig.hpp"
 #include "Directives.hpp"
 #include "Location.hpp"
@@ -30,6 +29,7 @@ class ServerBlock
 		{
 			return (dynamic_cast<T*>(_m[key]));
 		}
+	
 		class ValueNotFound : public std::exception
 		{
 			const char *what() const throw()
@@ -37,18 +37,23 @@ class ServerBlock
 				return ("Value in config file is not valid");
 			}
 		};
+	
 		void							parseFile();
-		bool							getAutoIndex() const;
+		t_autoindex						getAutoIndex();
 		const std::vector<Location *>	&getLocation() const;
+		std::vector<size_t>				getPorts() const;
+		bool							hasPort(size_t port);
 
 	private:
 
+		void	setPorts();
+		
 		std::string							_content;
 		std::map<std::string, Directives*>	_m;
 		char								_separator;
 		std::string							_end;
 		std::vector<Location *>				_locations;
-		bool								_autoIndex;
+		std::vector<size_t>					_ports;
 };
 
 #endif
